@@ -24,3 +24,17 @@ def parse_restaurants(city: str = "Нур-Султан", limit: int = 1000):
         response = requests.get(API_URL, headers=headers, params=params)
         data = response.json()
 
+        items = data.get("result", {}).get("items", [])
+        for item in items:
+            point = item.get("point", {})
+            results.append({
+                "name": item.get("name"),
+                "address": item.get("full_address_name", "N/A"),
+                "lat": point.get("lat"),
+                "lon": point.get("lon")
+            })
+
+        if len(results) >= limit or not items:
+            break
+
+    return results
